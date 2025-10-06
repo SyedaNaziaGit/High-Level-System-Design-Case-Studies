@@ -72,16 +72,22 @@ The client can take various forms—desktop applications, mobile apps, or web br
 
 <img width="681" height="341" alt="image" src="https://github.com/user-attachments/assets/6a482c32-0e5a-446e-9949-e1dd0945d3de" />
 At a high level, the architecture comprises four key components: the client, which tracks file changes within designated folders; cloud storage, typically leveraging services like Amazon S3 or other blob storage solutions to store the actual files; a messaging system, such as RabbitMQ or Kafka, to coordinate updates and notifications between components; and a database with caching, which maintains metadata about the files to ensure fast access and efficient synchronization. Together, these components form a robust ecosystem that enables reliable and consistent file management across devices.
+
 ### Folder watcher 
 The Folder watcher continuously monitors designated folders for any changes. As soon as new files are detected, it notifies the chunker and indexer, passing along the file paths. 
+
 ### Chunker
 The Chunker then splits these files into smaller chunks, computes a unique hash for each chunk, and uploads them to cloud storage, such as Amazon S3. Each uploaded chunk’s hash and cloud URL are returned to the indexer, which maps the hashes to their respective URLs and updates the internal database with the file metadata. This metadata not only aids in conflict resolution and offline access but also ensures consistent tracking of file changes. 
+
 ### Indexer
 The Indexer also communicates with the messaging service to propagate updates, which are queued by the synchronization service. 
+
 ### Syncronization Service/Sync service
 The Sync service then ensures that metadata and file updates are consistently synchronized across all devices, maintaining a reliable and consistent state in the central MySQL database. The synchronization service plays a crucial role in ensuring consistency across multiple devices. It sends messages back to the messaging queue, which are then broadcasted to all other clients belonging to the same user. Each client, having a similar folder structure, allows its local indexer to retrieve the corresponding file chunks from the cloud. The indexer then reconstructs the files and synchronizes them into the client’s local folder, ensuring that all devices have an up-to-date and consistent view of the user’s files.
+
 ###  Messaging Service 
 The Messaging Service acts as the communication backbone of the system, managing the flow of updates between different components. When file changes occur, they are not sent directly to the synchronization service; instead, they are routed through a message queue. This design enables asynchronous communication, ensuring that updates are processed efficiently without overloading any single component or blocking operations. By decoupling the client and sync services, the system becomes more scalable, fault-tolerant, and responsive. Each client can have its own dedicated queue—or a set of queues—allowing parallel handling of multiple updates and ensuring that all devices stay in sync, even under heavy load or network delays.
+
 <img width="646" height="455" alt="image" src="https://github.com/user-attachments/assets/2bed4e29-9f21-4fb0-968b-73380f12bc0e" />
 
 The system employs two types of message queues  a request queue and a response queue to handle file synchronization in an asynchronous and reliable manner. When a client detects a file change (for example, Client 1), it uploads the updated file chunks to the cloud and gathers all associated metadata, including chunk hashes, file versions, and paths. This metadata is then posted to the request queue instead of being sent directly to the synchronization service. The use of asynchronous queues is crucial because clients may not always be online or connected to the internet. By buffering updates in a queue, the system ensures that no messages are lost, even if a client temporarily disconnects.
@@ -93,8 +99,11 @@ The metadata database serves as the backbone for maintaining the state of files 
 The architectural flow can be summarized as:
 ### Clients → Edge Wrapper → Engine → Cache → MySQL. 
 Dropbox, for instance, uses a similar architecture with HStore as its metadata layer.
+
 Consistency in metadata storage is essential, as multiple clients may be modifying or syncing files simultaneously. While both RDBMS and NoSQL databases can be used, RDBMS systems like MySQL are preferred for their strong consistency guarantees. NoSQL databases, though scalable, often provide eventual consistency, which can lead to synchronization errors or missing chunks — an unacceptable risk in file storage systems. However, consistency layers can be added on top of NoSQL systems if scalability is a primary concern. Dropbox successfully uses MySQL to handle metadata for millions of users and files, proving that relational databases can scale effectively when designed and optimized properly.
+
 <img width="767" height="559" alt="image" src="https://github.com/user-attachments/assets/b8e3cd4a-5dc6-4e3c-9f71-3b594f78264f" />
+
 ### Internal Architecture of Metadata
 
 #### Scaling relational databases (RDBMS)
