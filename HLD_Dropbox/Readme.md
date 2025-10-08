@@ -54,7 +54,7 @@ There are several challenges when managing file updates on cloud storage like Am
 
 4.	History and Storage Management are costly: to maintain different versions of the file, we must store the full 20MB file for each update, even for tiny edits, which is inefficient and expensive.
 
-<img width="975" height="563" alt="image" src="https://github.com/user-attachments/assets/d34ddc31-6b83-44e6-bb40-2123f949f90c" />
+<img width="975" height="563" alt="HLDimage1" src="https://github.com/user-attachments/assets/d34ddc31-6b83-44e6-bb40-2123f949f90c" />
 
 To address the problems of bandwidth, latency, concurrency, and storage when updating large files on cloud storage, we can adopt a chunk-based approach instead of treating the file as a single unit. In this design, a file is divided into smaller chunks. When a small change is made—such as editing a single character—only the affected chunk needs to be updated and synced with the cloud. For example, if a file is split into 10 chunks and the third chunk is modified, only that 2MB chunk is uploaded instead of the entire 20MB file. This reduces bandwidth usage from 20MB to 2MB and decreases storage overhead, as we only store the updated chunk instead of maintaining a full copy of the file for each change.
 
@@ -145,3 +145,4 @@ Once the Presigned URL is obtained, the client uploads the file directly to S3. 
 After the upload completes, a Task Runner process is triggered to handle post-upload operations. This may include updating file status in the Metadata Database, triggering indexing for search functionality, or sending notifications to users. The Task Runner ensures that background tasks are executed reliably without blocking the main upload flow.
 #### 8. Downloading Services:
 For file downloads, clients send requests via the client application. The Download Service retrieves file metadata from the database, verifying permissions and ownership. Based on this information, it can generate a Presigned URL for secure direct download from S3. This ensures an efficient and secure download experience while maintaining data consistency and access control.
+
