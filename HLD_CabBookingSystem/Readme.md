@@ -47,7 +47,7 @@ This service handles rider-related operations, such as receiving ride requests, 
 
 By separating these responsibilities into dedicated services, Uber can independently scale and optimize the supply and demand sides of the platform, ensuring faster and more reliable matching for riders and drivers.
 
-<img width="1344" height="768" alt="Gemini_Generated_Image_e1tiqle1tiqle1ti" src="https://github.com/user-attachments/assets/6097762a-8152-4a37-b1aa-4515b333b98d" />
+<img width="1344" height="768" alt="HLDimage1" src="https://github.com/user-attachments/assets/6097762a-8152-4a37-b1aa-4515b333b98d" />
 
 ### Brief OverView 
 The cab booking system can be viewed as a dynamic interaction between supply and demand, where the platform continuously balances rider requests with available drivers in real time. Uber’s Dispatch System acts as a real-time marketplace that intelligently matches riders to nearby cabs, ensuring efficient allocation of resources. At the core of this system lies **DISCO (Dispatch Optimization System)**, which operates primarily on geospatial and location-based data. It leverages Google’s S2 library, a powerful tool that models the Earth’s surface as a sphere and divides it into small, hierarchical cells—each roughly 1 km in size. These cells, when combined, form a complete digital map, and every cell is assigned a unique identifier. This structure allows Uber to efficiently distribute and store location data across a distributed system. Using these unique cell IDs, the platform can quickly locate and retrieve specific data from the relevant server. Additionally, **consistent hashing** based on cell identifiers ensures balanced data distribution and quick access, while the S2 library enables precise geographical coverage and mapping for any given region or trip.
@@ -104,4 +104,5 @@ Every time a transaction or API call occurs between the driver app and the data 
 In the unlikely event that the main data center goes offline, the driver app continues to operate using its locally cached state. Once the system detects the failure, all communication is automatically rerouted to the **backup data center**. When connectivity is restored, the app syncs its stored state digest with the backup center, updating any pending trip or ride data seamlessly.
 
 This distributed and fault-tolerant design ensures that even during large-scale infrastructure failures, **ongoing rides are not interrupted**, data consistency is maintained, and both drivers and riders experience minimal service disruption — demonstrating Uber’s strong commitment to **resilience and high availability** in its global platform.
+
 
