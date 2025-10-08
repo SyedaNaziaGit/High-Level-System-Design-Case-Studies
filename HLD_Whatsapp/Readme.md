@@ -18,7 +18,7 @@ WhatsApp handles billions of messages every day, requiring a highly scalable and
 -  The system must be highly scalable to accommodate a growing user base and an increasing volume of messages daily.
 
 ## High Level Design of Whatsapp Messenger
-<img width="1408" height="736" alt="Gemini_Generated_Image_5m4tb25m4tb25m4t" src="https://github.com/user-attachments/assets/52244581-4ed4-4237-b4c9-ee06e1f70195" />
+<img width="1408" height="736" alt="HLdimg1" src="https://github.com/user-attachments/assets/52244581-4ed4-4237-b4c9-ee06e1f70195" />
 
 Designing a real-time messaging system like WhatsApp requires careful consideration of scalability, reliability, and user experience. At its core, the system enables seamless communication between two clients, say Client A and Client B, through a messaging server that acts as an intermediary. The server ensures that messages are delivered reliably, even under high load, and maintains the order and integrity of the conversation.
 
@@ -51,7 +51,7 @@ For media support, lightweight connections are maintained for messaging, while m
 For **telephony services** such as voice and video calls, WhatsApp is designed to handle high performance and scalability. It relies on efficient protocols (for example, REL 9) that allow updates to be applied dynamically and maintain lightweight connections. In practice, a single messaging server cannot realistically manage millions of simultaneous connections, so the system is architected to distribute connections across multiple servers. Technologies like FreeBSD, key-value pair databases, and cloud infrastructure such as AWS web servers are used to maximize performance and reliability, ensuring that millions of users can connect and communicate in real time without delays or interruptions.
 
 ## Low Level Design For Whatsapp Messenger
-<img width="1408" height="736" alt="Gemini_Generated_Image_wstsz2wstsz2wsts" src="https://github.com/user-attachments/assets/b6a582f7-61b6-4353-b453-308d6d550b6e" />
+<img width="1408" height="736" alt="hldimage2" src="https://github.com/user-attachments/assets/b6a582f7-61b6-4353-b453-308d6d550b6e" />
 
 WhatsApp’s architecture is designed to support real-time messaging, media sharing, and group communication at massive scale while maintaining reliability and low latency. At the core of this system is the WebSocket Server, which establishes persistent connections with each active user’s device. This enables instant message delivery, with the WebSocket Manager using Redis to map users to assigned ports, ensuring that messages are routed efficiently to the correct recipient.
 
@@ -62,3 +62,4 @@ For media sharing, the Asset Service manages uploading, storage, and retrieval o
 WhatsApp also supports group messaging through the Group Service, which maintains group metadata, including member lists and statuses, in MySQL and Redis for fast access. Each group is represented as a Kafka topic, allowing messages to be published and delivered sequentially to all group members. This ensures consistency and low-latency delivery, even for large groups.
 
 Together, these components—WebSocket servers, message queues, databases, media services, and caching layers—work in harmony to provide a seamless, secure, and highly scalable messaging experience for millions of users worldwide.
+
