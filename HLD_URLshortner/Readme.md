@@ -32,7 +32,7 @@ For example,
 - 30 million users per month :  the system would consume approximately 60.7 GB of data per month
 -  which translates to about 0.7 TB per year and roughly 3.6 TB over five years.
 ## Low Level Design for URL shortner
-<img width="1408" height="736" alt="Gemini_Generated_Image_sxrfbisxrfbisxrf" src="https://github.com/user-attachments/assets/a420a1f3-4cda-466a-897e-6a2b4497e13c" />
+<img width="1408" height="736" alt="lowlevel design image " src="https://github.com/user-attachments/assets/a420a1f3-4cda-466a-897e-6a2b4497e13c" />
 # Choosing Database for storing URL
 When choosing a database for a URL-shortening service you have to weigh consistency guarantees against operational complexity.
 
@@ -51,7 +51,7 @@ In practice you pick a pattern that matches your scale and risk tolerance. For s
 To generate **unique short URLs** efficiently, we can use a **Base62 encoding algorithm**, 
 - which converts a numeric ID into a short alphanumeric string using digits (0–9), lowercase letters (a–z), and uppercase letters (A–Z).
 - This approach ensures compact, URL-friendly codes while maintaining uniqueness. For instance, the following sample function demonstrates this logic:
-<img width="974" height="353" alt="image" src="https://github.com/user-attachments/assets/2dff5f94-a77d-47cb-a801-bc72f3fee5f7" />
+<img width="974" height="353" alt="hashcode" src="https://github.com/user-attachments/assets/2dff5f94-a77d-47cb-a801-bc72f3fee5f7" />
 This function takes a decimal number and returns its Base62-encoded form, which can then be used as the unique identifier in shortened URLs.
 
 To design a truly **scalable and efficient URL-shortening system**, we can adopt a **counter-based** approach instead of relying on random numbers or hashing. In this technique, a **global counter variable** is maintained, which increments by one each time a new short URL is created. Because this counter is synchronized and unique, every new request automatically receives a distinct numeric value. This number is then passed through a **Base62 encoding function** to generate a compact, **alphanumeric identifier**, which becomes the **short URL suffix**.
@@ -94,10 +94,20 @@ This API retrieves the original long URL when a user accesses the short link, en
 
 In addition to these, it’s important to track **analytics and system performance** to understand how users are interacting with the service. This can include metrics such as the number of clicks, user locations, popular links, and system health indicators. For this, we can integrate Google Analytics, set up our own analytics service, or use **Elasticsearch and related open-source tools** to collect and visualize data. Incorporating analytics not only helps monitor application performance and user engagement but also provides valuable insights for scaling, optimizing system resources, and enhancing the overall user experience.
 ## High Level Design for URL Shortner
-<img width="1472" height="704" alt="Gemini_Generated_Image_ytdl6nytdl6nytdl" src="https://github.com/user-attachments/assets/ef1f2a5d-c04a-4d4f-96a2-c8092e6c65ed" />
+<img width="1472" height="704" alt="Usecase Diagram for HLD" src="https://github.com/user-attachments/assets/ef1f2a5d-c04a-4d4f-96a2-c8092e6c65ed" />
+
+#### Architecture of a URL Shortener Service
+
+The **user interface** allows users to submit long URLs via a web form or API and receive a shortened link in return. The **application server** is responsible for generating unique short keys, storing the URL-key mappings in the database, handling redirections, and tracking clicks.
+
+A **load balancer** distributes incoming traffic efficiently across three layers: between clients and application servers, between application servers and the **database**, and between application servers and the caching layer. The database stores the URL-to-key mappings, ensures uniqueness, and can scale horizontally using NoSQL solutions like MongoDB or Cassandra.
+
+To speed up access, a **caching layer** such as Redis or Memcached is used to store frequently accessed URLs in memory. A **cleanup service** periodically removes expired or unused data from the system to optimize storage.
+
+For **redirection**, the system looks up the short key, retrieves the original URL, and performs an HTTP 301 redirect. An **analytics module** tracks clicks, referrers, browsers, and devices, providing insights into user behavior. Finally, the **security layer** protects the service from abuse, including phishing, malware, DDoS attacks, and brute-force attempts, using measures like firewalls, rate limiting, and authentication.
 
 
 
 
 
-This function takes a decimal number and returns its Base62-encoded form, which can then be used as the unique identifier in shortened URLs.
+
